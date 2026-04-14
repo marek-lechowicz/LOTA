@@ -21,6 +21,7 @@ def generate_validation_settings():
     settings = Configurator().parse()
     settings.isTrain = False
     settings.isVal = True
+    settings.isTest = True
     return settings
 
 

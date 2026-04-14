@@ -12,8 +12,8 @@ class ConfigurationManager:
         # Training hyperparameters
         argument_parser.add_argument('--batchsize', type=int, default=64,
                                      help='Number of samples processed simultaneously')
-        argument_parser.add_argument('--choices', default=[1, 1, 1, 1, 1, 1, 1, 1],
-                                     help='Dataset selection flags')
+        argument_parser.add_argument('--choices', type=int, nargs='+', default=[1, 1, 1, 1, 1, 1, 1, 1],
+                                     help='Dataset selection flags (e.g., --choices 1 0 1 ...)')
         argument_parser.add_argument('--epoch', type=int, default=30,
                                      help='Total training iterations')
         argument_parser.add_argument('--lr', type=float, default=0.0001,
@@ -21,10 +21,10 @@ class ConfigurationManager:
         argument_parser.add_argument('--load', type=str, default=None,
                                      help='Path to pre-trained model weights')
         argument_parser.add_argument('--image_root', type=str,
-                                     default='/home/hdd1/chengrenxi/GenImage',
+                                     default='/home/marek/projects/fake_flickr_sota/data',
                                      help='Root directory for image datasets')
         argument_parser.add_argument('--save_path', type=str,
-                                     default='/home/hdd1/chengrenxi/sdv5_thresholding2/',
+                                     default='/home/marek/projects/fake_flickr_sota/LOTA/results/',
                                      help='Directory for saving model outputs')
         argument_parser.add_argument('--isPatch', type=bool, default=True,
                                      help='Enable patch processing mode')
@@ -56,7 +56,15 @@ class ConfigurationManager:
         config, _ = argument_parser.parse_known_args()
         self.argument_parser = argument_parser
 
-        return self.argument_parser.parse_args()
+        args = self.argument_parser.parse_args()
+        
+        # Ensure choices has exactly 8 elements
+        if len(args.choices) < 8:
+            args.choices = args.choices + [0] * (8 - len(args.choices))
+        elif len(args.choices) > 8:
+            args.choices = args.choices[:8]
+            
+        return args
 
     def display_configuration(self, config):
         """Present configuration details in a structured format"""

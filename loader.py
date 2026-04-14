@@ -10,15 +10,31 @@ from pathlib import Path
 from typing import List, Tuple, Dict, Any, Union
 
 MODEL_NAME_MAP = {
-    0: 'BigGAN',
-    1: 'Midjourney',
-    2: 'Wukong',
-    3: 'Stable_Diffusion_v1.4',
-    4: 'Stable_Diffusion_v1.5',
-    5: 'ADM',
-    6: 'GLIDE',
-    7: 'VQDM'
+    0: 'flux_1_dev',
+    1: 'flux_fill_flux_1_dev',
+    2: 'flux_fill_real_rescaled',
+    3: 'flux_fill_sd_3_5_large',
+    4: 'sd_1_5',
+    5: 'sd_3_5_large',
+    6: 'sdxl_turbo',
+    7: 'z_image_turbo'
 }
+
+def get_split_files(directory, split, split_ratios=(0.8, 0.1, 0.1)):
+    """Deterministically split files into train, val, test sets."""
+    files = sorted([f for f in os.listdir(directory) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))])
+    n = len(files)
+    train_end = int(n * split_ratios[0])
+    val_end = train_end + int(n * split_ratios[1])
+
+    if split == 'train':
+        return files[:train_end]
+    elif split == 'val':
+        return files[train_end:val_end]
+    elif split == 'test':
+        return files[val_end:]
+    else:
+        return files
 
 def create_preprocessing_pipeline(options):
     if options.isPatch:
@@ -45,25 +61,27 @@ def apply_preprocessing(image, options):
     pipeline = create_preprocessing_pipeline(options)
     return pipeline(image)
 
-
 class GenerativeImageTrainingSet(Dataset):
     def __init__(self, root_dir, dataset_name, options):
         super().__init__()
         self.options = options
-        self.base_path = os.path.join(root_dir, dataset_name, "train")
+        
+        # In the new structure, real images are in 'real' and AI images are in 'dataset_name'
+        real_dir = os.path.join(root_dir, "real")
+        ai_dir = os.path.join(root_dir, dataset_name)
 
-        self.natural_images = self._load_images("nature")
-        self.ai_images = self._load_images("ai")
+        # Get deterministic split
+        self.natural_filenames = get_split_files(real_dir, 'train')
+        self.ai_filenames = get_split_files(ai_dir, 'train')
+
+        self.natural_images = [os.path.join(real_dir, f) for f in self.natural_filenames]
+        self.ai_images = [os.path.join(ai_dir, f) for f in self.ai_filenames]
 
         self.all_images = self.natural_images + self.ai_images
         self.labels = torch.cat([
             torch.ones(len(self.natural_images)),
             torch.zeros(len(self.ai_images))
         ])
-
-    def _load_images(self, category):
-        category_path = os.path.join(self.base_path, category)
-        return [os.path.join(category_path, f) for f in os.listdir(category_path)]
 
     def _load_rgb(self, img_path):
         try:
@@ -90,15 +108,16 @@ class GenerativeImageTrainingSet(Dataset):
         return len(self.all_images)
 
 class GenerativeImageValidationSet(Dataset):
-    def __init__(self, root_dir, dataset_name, is_natural, options):
+    def __init__(self, root_dir, dataset_name, is_natural, options, split='val'):
         super().__init__()
         self.options = options
-        self.base_path = os.path.join(root_dir, dataset_name, "val")
-
-        category = "nature" if is_natural else "ai"
-        self.img_dir = os.path.join(self.base_path, category)
-        self.image_paths = [os.path.join(self.img_dir, f)
-                            for f in os.listdir(self.img_dir)]
+        
+        category_dir = "real" if is_natural else dataset_name
+        self.img_dir = os.path.join(root_dir, category_dir)
+        
+        # Use 'val' or 'test' split depending on needs
+        filenames = get_split_files(self.img_dir, split)
+        self.image_paths = [os.path.join(self.img_dir, f) for f in filenames]
 
         self.labels = torch.ones(len(self.image_paths)) if is_natural else torch.zeros(len(self.image_paths))
 
@@ -122,8 +141,15 @@ class GenerativeImageValidationSet(Dataset):
         return len(self.image_paths)
 
 def create_validation_loader(options, dataset_name, is_natural):
+    # Detect if we should use val or test split
+    # Since test.py and train.py use same config flags, 
+    # we can try to check if we are in main of test.py or something, 
+    # but more robustly let's just use 'test' split if some flag is set.
+    # For now, let's use 'val' as default.
+    split = 'test' if (hasattr(options, 'isTest') and options.isTest) else 'val'
+    
     val_dataset = GenerativeImageValidationSet(
-        options.image_root, dataset_name, is_natural, options
+        options.image_root, dataset_name, is_natural, options, split=split
     )
 
     def collate_batch(batch):
@@ -170,14 +196,14 @@ def create_training_loader(options):
     datasets = []
 
     dataset_config = [
-        (0, "BigGAN"),
-        (1, "Midjourney"),
-        (2, "Wukong"),
-        (3, "Stable_Diffusion_v1.4"),
-        (4, "Stable_Diffusion_v1.5"),
-        (5, "ADM"),
-        (6, "GLIDE"),
-        (7, "VQDM")
+        (0, "flux_1_dev"),
+        (1, "flux_fill_flux_1_dev"),
+        (2, "flux_fill_real_rescaled"),
+        (3, "flux_fill_sd_3_5_large"),
+        (4, "sd_1_5"),
+        (5, "sd_3_5_large"),
+        (6, "sdxl_turbo"),
+        (7, "z_image_turbo")
     ]
 
     for idx, folder_name in dataset_config:
