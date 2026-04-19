@@ -1,6 +1,5 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms
 import os
 from PIL import Image
 import numpy as np
@@ -8,6 +7,9 @@ import cv2
 import random
 from pathlib import Path
 from typing import List, Tuple, Dict, Any, Union
+import io
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
 
 MODEL_NAME_MAP = {
     0: 'flux_1_dev',
@@ -36,30 +38,43 @@ def get_split_files(directory, split, split_ratios=(0.8, 0.1, 0.1)):
     else:
         return files
 
-def create_preprocessing_pipeline(options):
-    if options.isPatch:
-        transform_func = transforms.Lambda(
-            lambda img: bit_patch_process(
-                img, options.img_height, options.bit_mode,
-                options.patch_size, options.patch_mode
-            )
-        )
-    else:
-        transform_func = transforms.Resize((options.img_height, options.img_height))
+def create_preprocessing_pipeline(options, is_training=False):
+    transforms_list = []
+    
+    if not options.isPatch:
+        transforms_list.append(A.Resize(options.img_height, options.img_height))
+    
+    transforms_list.append(A.ImageCompression(quality_range=(70, 95), p=1.0))
+    
+    if is_training:
+        transforms_list.append(A.HorizontalFlip(p=0.5))
+        transforms_list.append(A.RandomBrightnessContrast(p=0.2))
+        transforms_list.append(A.GaussNoise(p=0.2))
 
-    return transforms.Compose([
-        transform_func,
-        transforms.ToTensor(),
-        transforms.Normalize(
+    transforms_list.extend([
+        A.Normalize(
             mean=[0.485, 0.456, 0.406],
             std=[0.229, 0.224, 0.225]
         ),
+        ToTensorV2(),
     ])
 
+    return A.Compose(transforms_list)
 
-def apply_preprocessing(image, options):
-    pipeline = create_preprocessing_pipeline(options)
-    return pipeline(image)
+
+def apply_preprocessing(image, options, is_training=False):
+    image_np = np.array(image)
+    
+    if options.isPatch:
+        # bit_patch_process handles RGB numpy/PIL and returns numpy RGB
+        image_np = bit_patch_process(
+            image_np, options.img_height, options.bit_mode,
+            options.patch_size, options.patch_mode
+        )
+        
+    pipeline = create_preprocessing_pipeline(options, is_training=is_training)
+    augmented = pipeline(image=image_np)
+    return augmented["image"]
 
 class GenerativeImageTrainingSet(Dataset):
     def __init__(self, root_dir, dataset_name, options):
@@ -101,7 +116,7 @@ class GenerativeImageTrainingSet(Dataset):
             img = self._load_rgb(self.all_images[prev_index])
             label = self.labels[prev_index]
 
-        processed_img = apply_preprocessing(img, self.options)
+        processed_img = apply_preprocessing(img, self.options, is_training=True)
         return processed_img, label
 
     def __len__(self):
@@ -134,7 +149,7 @@ class GenerativeImageValidationSet(Dataset):
         img = self._load_rgb(self.image_paths[index])
         label = self.labels[index]
 
-        processed_img = apply_preprocessing(img, self.options)
+        processed_img = apply_preprocessing(img, self.options, is_training=False)
         return processed_img, label
 
     def __len__(self):

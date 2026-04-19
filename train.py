@@ -3,6 +3,7 @@ import torch
 import numpy
 from datetime import datetime
 from PIL import ImageFile
+from tqdm import tqdm
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
