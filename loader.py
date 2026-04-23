@@ -218,11 +218,12 @@ class GenerativeImageValidationSet(Dataset):
             return Image.new('RGB', (256, 256), (0, 0, 0))
 
     def __getitem__(self, index):
-        img = self._load_rgb(self.image_paths[index])
+        img_path = self.image_paths[index]
+        img = self._load_rgb(img_path)
         label = self.labels[index]
 
         processed_img = apply_preprocessing(img, self.options, is_training=False)
-        return processed_img, label
+        return processed_img, label, img_path
 
     def __len__(self):
         return len(self.image_paths)
@@ -242,7 +243,8 @@ def create_validation_loader(options, dataset_name, is_natural):
     def collate_batch(batch):
         inputs = torch.stack([item[0] for item in batch])
         labels = torch.tensor([item[1] for item in batch])
-        return inputs, labels
+        paths = [item[2] for item in batch]
+        return inputs, labels, paths
 
     return DataLoader(
         val_dataset,

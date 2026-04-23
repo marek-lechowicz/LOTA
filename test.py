@@ -2,6 +2,7 @@ import os
 import torch
 import datetime
 import numpy as np
+import pandas as pd
 
 # Import modules with alternative names
 from util import set_random_seed as seed_generator
@@ -25,6 +26,79 @@ def generate_validation_settings():
     return settings
 
 
+def compute_metrics(y_true, y_scores):
+    """Calculate comprehensive evaluation metrics using numpy"""
+    y_true = np.array(y_true)
+    y_scores = np.array(y_scores)
+    y_pred = (y_scores > 0.5).astype(int)
+
+    # Accuracy
+    accuracy = np.mean(y_true == y_pred)
+
+    # Precision, Recall
+    tp = np.sum((y_true == 1) & (y_pred == 1))
+    tn = np.sum((y_true == 0) & (y_pred == 0))
+    fp = np.sum((y_true == 0) & (y_pred == 1))
+    fn = np.sum((y_true == 1) & (y_pred == 0))
+
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+
+    # MCC
+    mcc_num = (tp * tn) - (fp * fn)
+    mcc_den = np.sqrt(float(tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+    mcc = mcc_num / mcc_den if mcc_den > 0 else 0
+
+    # AUC ROC
+    try:
+        desc_score_indices = np.argsort(y_scores)[::-1]
+        y_true_sorted = y_true[desc_score_indices]
+        
+        tps = np.cumsum(y_true_sorted)
+        fps = np.cumsum(1 - y_true_sorted)
+        
+        if tps[-1] == 0 or fps[-1] == 0:
+            auc = 0.5 # Default for single-class
+        else:
+            tpr = tps / tps[-1]
+            fpr = fps / fps[-1]
+            auc = np.trapz(tpr, fpr)
+    except:
+        auc = 0.0
+
+    # Average Precision (AP)
+    try:
+        if np.sum(y_true) == 0:
+            ap = 0.0
+        else:
+            # Sort by scores
+            indices = np.argsort(y_scores)[::-1]
+            y_true_sorted = y_true[indices]
+            
+            tps = np.cumsum(y_true_sorted)
+            fps = np.cumsum(1 - y_true_sorted)
+            
+            precisions = tps / (tps + fps)
+            recalls = tps / np.sum(y_true)
+            
+            # Prepend/Append for calculation
+            precisions = np.concatenate(([1], precisions))
+            recalls = np.concatenate(([0], recalls))
+            
+            ap = np.sum((recalls[1:] - recalls[:-1]) * precisions[1:])
+    except:
+        ap = 0.0
+
+    return {
+        "accuracy": accuracy,
+        "precision": precision,
+        "recall": recall,
+        "mcc": mcc,
+        "auc": auc,
+        "ap": ap
+    }
+
+
 def assess_model_performance(
         validation_datasets,
         neural_network,
@@ -36,61 +110,62 @@ def assess_model_performance(
 
     with torch.no_grad():
         for dataset in validation_datasets:
-            ai_correct = natural_correct = 0
+            dataset_labels = []
+            dataset_scores = []
+            dataset_paths = []
 
             dataset_identifier = dataset['name']
             ai_data_loader = dataset['val_ai_loader']
-            ai_count = dataset['ai_size']
             natural_data_loader = dataset['val_nature_loader']
-            natural_count = dataset['nature_size']
 
             print(f"[Evaluating dataset: {dataset_identifier}]")
 
-            # Analyze AI-generated images
-            for image_batch, target_labels in ai_data_loader:
-                image_batch = image_batch.cuda()
-                target_labels = target_labels.cuda()
+            # Process both loaders
+            for loader_name, data_loader in [("AI", ai_data_loader), ("Natural", natural_data_loader)]:
+                for image_batch, target_labels, paths in data_loader:
+                    image_batch = image_batch.cuda()
+                    
+                    predictions = neural_network(image_batch)
+                    prediction_scores = torch.sigmoid(predictions).flatten()
 
-                predictions = neural_network(image_batch)
-                prediction_scores = torch.sigmoid(predictions).flatten()
+                    dataset_labels.extend(target_labels.cpu().numpy().tolist())
+                    dataset_scores.extend(prediction_scores.cpu().numpy().tolist())
+                    dataset_paths.extend(paths)
 
-                # Determine correct classifications
-                correct_predictions = (
-                        ((prediction_scores > 0.5) & (target_labels == 1)) |
-                        ((prediction_scores < 0.5) & (target_labels == 0))
-                )
-                ai_correct += correct_predictions.sum().item()
+            # Compute metrics for this dataset
+            m = compute_metrics(dataset_labels, dataset_scores)
+            
+            print(f"--- Results for {dataset_identifier} ---")
+            print(f"Accuracy:  {m['accuracy']:.4f}")
+            print(f"AUC ROC:   {m['auc']:.4f}")
+            print(f"Avg Prec:  {m['ap']:.4f}")
+            print(f"Precision: {m['precision']:.4f}")
+            print(f"Recall:    {m['recall']:.4f}")
+            print(f"MCC:       {m['mcc']:.4f}")
 
-            ai_performance = ai_correct / ai_count
-            print(f"(1) AI Classification Accuracy: {ai_performance:.4f}")
+            # Save detailed results to CSV
+            df = pd.DataFrame({
+                'path': dataset_paths,
+                'label': dataset_labels,
+                'score': dataset_scores
+            })
+            csv_name = f"detailed_results_{dataset_identifier}.csv"
+            csv_path = os.path.join(results_directory, csv_name)
+            df.to_csv(csv_path, index=False)
+            print(f"Detailed results saved to: {csv_path}")
 
-            # Analyze natural images
-            for image_batch, target_labels in natural_data_loader:
-                image_batch = image_batch.cuda()
-                target_labels = target_labels.cuda()
+            # Global aggregation
+            aggregate_correct += np.sum(np.array(dataset_labels) == (np.array(dataset_scores) > 0.5))
+            aggregate_samples += len(dataset_labels)
 
-                predictions = neural_network(image_batch)
-                prediction_scores = torch.sigmoid(predictions).flatten()
-
-                correct_predictions = (
-                        ((prediction_scores > 0.5) & (target_labels == 1)) |
-                        ((prediction_scores < 0.5) & (target_labels == 0))
-                )
-                natural_correct += correct_predictions.sum().item()
-
-            natural_performance = natural_correct / natural_count
-            print(f"(2) Natural Image Accuracy: {natural_performance:.4f}")
-
-            # Compute dataset-level performance
-            dataset_performance = (ai_correct + natural_correct) / (ai_count + natural_count)
-            aggregate_correct += ai_correct + natural_correct
-            aggregate_samples += ai_count + natural_count
-
-            print(f"Subset Performance: {dataset_performance:.4f}")
+            # Compatibility with old parser in cross_experiment_pipeline.py
+            # The parser looks for "Subset Performance: 0.1234"
+            print(f"Subset Performance: {m['accuracy']:.4f}")
 
     # Compute overall performance
-    overall_performance = aggregate_correct / aggregate_samples
-    print(f"[Global Accuracy: {overall_performance:.4f}]")
+    if aggregate_samples > 0:
+        overall_performance = aggregate_correct / aggregate_samples
+        print(f"[Global Accuracy: {overall_performance:.4f}]")
 
 
 def configure_computation_device(device_id):
