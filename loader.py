@@ -22,36 +22,80 @@ MODEL_NAME_MAP = {
     7: 'z_image_turbo'
 }
 
-def get_split_files(directory, split, split_ratios=(0.8, 0.1, 0.1)):
-    """Deterministically split files into train, val, test sets."""
-    files = sorted([f for f in os.listdir(directory) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))])
-    n = len(files)
-    train_end = int(n * split_ratios[0])
-    val_end = train_end + int(n * split_ratios[1])
+VAL_LIST_PATH = Path("/home/marek/FakeFlickr/data/flickr30k_entities/val.txt")
+TEST_LIST_PATH = Path("/home/marek/FakeFlickr/data/flickr30k_entities/test.txt")
 
-    if split == 'train':
-        return files[:train_end]
-    elif split == 'val':
-        return files[train_end:val_end]
+DATASET_PATHS = {
+    "real": "/home/marek/FakeFlickr/data/fake-flickr/real",
+    "real_rescaled": "/home/marek/FakeFlickr/data/fake-flickr/real_rescaled",
+    "flux_1_dev": "/home/marek/FakeFlickr/data/fake-flickr/generated/flux_1_dev/img",
+    "sd_3_5_large": "/home/marek/FakeFlickr/data/fake-flickr/generated/sd_3_5_large/img",
+    "sdxl_turbo": "/home/marek/FakeFlickr/data/fake-flickr/generated/sdxl_turbo/img",
+    "z_image_turbo": "/home/marek/FakeFlickr/data/fake-flickr/generated/z_image_turbo/img",
+    "flux_fill_real_rescaled": "/home/marek/FakeFlickr/data/fake-flickr/generated/flux_fill_real_rescaled/img",
+    "flux_fill_flux_1_dev": "/home/marek/FakeFlickr/data/fake-flickr/generated/flux_fill_flux_1_dev/img",
+    "flux_fill_sd_3_5_large": "/home/marek/FakeFlickr/data/fake-flickr/generated/flux_fill_sd_3_5_large/img",
+    "sd_1_5": "/home/marek/FakeFlickr/data/fake-flickr/generated/sd_1_5/img", # Backup, jakby zostało w mapie
+}
+
+def read_split_ids(file_path: Path):
+    if not file_path.exists():
+        return set()
+    return {
+        line.strip().replace("\r", "")
+        for line in file_path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    }
+
+def get_split_files(directory, split):
+    """Deterministically split files into train, val, test sets matching flickr30k exact sets from data.py."""
+    val_ids = read_split_ids(VAL_LIST_PATH)
+    test_ids = read_split_ids(TEST_LIST_PATH)
+    
+    # Train set based exactly on base 'real' IDs missing from val and test
+    base_real_dir = DATASET_PATHS["real"]
+    base_files = [f for f in os.listdir(base_real_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+    base_real_ids = {os.path.splitext(f)[0] for f in base_files}
+    train_ids = base_real_ids - val_ids - test_ids
+    
+    if split == 'val':
+        target_ids = val_ids
     elif split == 'test':
-        return files[val_end:]
+        target_ids = test_ids
+    elif split == 'train':
+        target_ids = train_ids
     else:
-        return files
+        target_ids = base_real_ids
+        
+    # Read files in the targeted directory and keep only those matching target_ids
+    if not os.path.exists(directory):
+        print(f"Warning: directory {directory} does not exist.")
+        return []
 
-def create_preprocessing_pipeline(options, is_training=False):
+    files = sorted([f for f in os.listdir(directory) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))])
+    
+    split_files = []
+    for f in files:
+        base_id = os.path.splitext(f)[0]
+        if base_id in target_ids:
+            split_files.append(f)
+            
+    return split_files
+
+def create_augmentations(is_training=False):
     transforms_list = []
     
-    if not options.isPatch:
-        transforms_list.append(A.Resize(options.img_height, options.img_height))
-    
-    transforms_list.append(A.ImageCompression(quality_range=(70, 95), p=1.0))
-    
     if is_training:
+        transforms_list.append(A.ImageCompression(quality_range=(70, 95), p=0.1))
         transforms_list.append(A.HorizontalFlip(p=0.5))
         transforms_list.append(A.RandomBrightnessContrast(p=0.2))
         transforms_list.append(A.GaussNoise(p=0.2))
 
-    transforms_list.extend([
+    return A.Compose(transforms_list)
+
+
+def create_normalization():
+    return A.Compose([
         A.Normalize(
             mean=[0.485, 0.456, 0.406],
             std=[0.229, 0.224, 0.225]
@@ -59,31 +103,39 @@ def create_preprocessing_pipeline(options, is_training=False):
         ToTensorV2(),
     ])
 
-    return A.Compose(transforms_list)
-
 
 def apply_preprocessing(image, options, is_training=False):
     image_np = np.array(image)
     
+    # 1. Albumentations (szum, kompresja, flip) - tylko na PEŁNYM obrazie w f. treningu
+    aug_pipeline = create_augmentations(is_training=is_training)
+    augmented_full = aug_pipeline(image=image_np)
+    image_np = augmented_full["image"]
+    
+    # 2. Extract Patch (szuka łatek na rozszerzonym i przetworzonym obrazie)
     if options.isPatch:
-        # bit_patch_process handles RGB numpy/PIL and returns numpy RGB
-        image_np = bit_patch_process(
+        patched_image = bit_patch_process(
             image_np, options.img_height, options.bit_mode,
             options.patch_size, options.patch_mode
         )
+        image_np = np.array(patched_image)
+    else:
+        # Fallback jeśli patch_mode nie jest użyte (na wszelki wypadek)
+        print("No patch mode used")
+        image_np = cv2.resize(image_np, (options.img_height, options.img_height))
         
-    pipeline = create_preprocessing_pipeline(options, is_training=is_training)
-    augmented = pipeline(image=image_np)
-    return augmented["image"]
-
+    # 3. Normalizacja i ToTensor() na ostatecznie wyciętym kawałku
+    norm_pipeline = create_normalization()
+    final_aug = norm_pipeline(image=image_np)
+    return final_aug["image"]
 class GenerativeImageTrainingSet(Dataset):
     def __init__(self, root_dir, dataset_name, options):
         super().__init__()
         self.options = options
         
-        # In the new structure, real images are in 'real' and AI images are in 'dataset_name'
-        real_dir = os.path.join(root_dir, "real")
-        ai_dir = os.path.join(root_dir, dataset_name)
+        # In the new structure, we fetch absolute paths matching ResNet
+        real_dir = DATASET_PATHS[options.real_source]
+        ai_dir = DATASET_PATHS.get(dataset_name, os.path.join(root_dir, dataset_name))
 
         # Get deterministic split
         self.natural_filenames = get_split_files(real_dir, 'train')
@@ -100,9 +152,18 @@ class GenerativeImageTrainingSet(Dataset):
 
     def _load_rgb(self, img_path):
         try:
-            with open(img_path, 'rb') as f:
-                img = Image.open(f)
-                return img.convert('RGB')
+            image = cv2.imread(img_path)
+            if image is None:
+                 return Image.new('RGB', (256, 256), (0, 0, 0))
+            
+            # Equalize format bias by compressing lossless images (PNG/WebP) to jpg with quality 90
+            if not str(img_path).lower().endswith((".jpg", ".jpeg")):
+                success, encoded_image = cv2.imencode(".jpg", image, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+                if success:
+                    image = cv2.imdecode(encoded_image, cv2.IMREAD_COLOR)
+
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            return Image.fromarray(image)
         except Exception as e:
             print(f"Image Loading Error {img_path}: {str(e)}")
             return Image.new('RGB', (256, 256), (0, 0, 0))
@@ -127,8 +188,10 @@ class GenerativeImageValidationSet(Dataset):
         super().__init__()
         self.options = options
         
-        category_dir = "real" if is_natural else dataset_name
-        self.img_dir = os.path.join(root_dir, category_dir)
+        if is_natural:
+            self.img_dir = DATASET_PATHS[options.real_source]
+        else:
+            self.img_dir = DATASET_PATHS.get(dataset_name, os.path.join(root_dir, dataset_name))
         
         # Use 'val' or 'test' split depending on needs
         filenames = get_split_files(self.img_dir, split)
@@ -138,9 +201,18 @@ class GenerativeImageValidationSet(Dataset):
 
     def _load_rgb(self, img_path):
         try:
-            with open(img_path, 'rb') as f:
-                img = Image.open(f)
-                return img.convert('RGB')
+            image = cv2.imread(img_path)
+            if image is None:
+                 return Image.new('RGB', (256, 256), (0, 0, 0))
+                 
+            # Equalize format bias by compressing lossless images (PNG/WebP) to jpg with quality 90
+            if not str(img_path).lower().endswith((".jpg", ".jpeg")):
+                success, encoded_image = cv2.imencode(".jpg", image, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+                if success:
+                    image = cv2.imdecode(encoded_image, cv2.IMREAD_COLOR)
+
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            return Image.fromarray(image)
         except Exception as e:
             print(f"Val Image Loading Error {img_path}: {str(e)}")
             return Image.new('RGB', (256, 256), (0, 0, 0))

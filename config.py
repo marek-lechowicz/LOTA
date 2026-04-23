@@ -20,6 +20,8 @@ class ConfigurationManager:
                                      help='Initial learning rate')
         argument_parser.add_argument('--load', type=str, default=None,
                                      help='Path to pre-trained model weights')
+        argument_parser.add_argument('--real_source', type=str, default='real',
+                                     help='Primary real source name (e.g. real, real_rescaled, flux_1_dev)')
         argument_parser.add_argument('--image_root', type=str,
                                      default='/home/marek/projects/fake_flickr_sota/data',
                                      help='Root directory for image datasets')

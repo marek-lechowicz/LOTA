@@ -38,7 +38,7 @@ def execute_training_iteration(
     total_loss = 0
 
     try:
-        for batch_idx, (inputs, targets) in enumerate(data_provider, start=1):
+        for batch_idx, (inputs, targets) in enumerate(tqdm(data_provider, desc=f"Epoch {epoch_index}"), start=1):
             optimizer.zero_grad()
 
             # Move data to GPU

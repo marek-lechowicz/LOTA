@@ -6,79 +6,108 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Nazwy modeli zgodne z loader.py
-MODEL_NAMES = [
-    'flux_1_dev',
-    'flux_fill_flux_1_dev',
-    'flux_fill_real_rescaled',
-    'flux_fill_sd_3_5_large',
-    'sd_1_5',
-    'sd_3_5_large',
-    'sdxl_turbo',
-    'z_image_turbo'
+# Słownik indeksów z loader.py (argument --choices)
+MODEL_TO_CHOICE_IDX = {
+    'flux_1_dev': 0,
+    'flux_fill_flux_1_dev': 1,
+    'flux_fill_real_rescaled': 2,
+    'flux_fill_sd_3_5_large': 3,
+    'sd_1_5': 4,
+    'sd_3_5_large': 5,
+    'sdxl_turbo': 6,
+    'z_image_turbo': 7
+}
+
+# 11 eksperymentów z data.py z ResNeta
+EXPERIMENTS = [
+    # General models vs primary_real_source_name ("real")
+    {"name": "flux_1_dev__vs__real", "fake": "flux_1_dev", "real": "real"},
+    {"name": "flux_fill_flux_1_dev__vs__real", "fake": "flux_fill_flux_1_dev", "real": "real"},
+    {"name": "flux_fill_real_rescaled__vs__real", "fake": "flux_fill_real_rescaled", "real": "real"},
+    {"name": "flux_fill_sd_3_5_large__vs__real", "fake": "flux_fill_sd_3_5_large", "real": "real"},
+    {"name": "sd_1_5__vs__real", "fake": "sd_1_5", "real": "real"},
+    {"name": "sd_3_5_large__vs__real", "fake": "sd_3_5_large", "real": "real"},
+    {"name": "sdxl_turbo__vs__real", "fake": "sdxl_turbo", "real": "real"},
+    {"name": "z_image_turbo__vs__real", "fake": "z_image_turbo", "real": "real"},
+    
+    # Inpainting model vs its exact rescaled/generated source
+    {"name": "flux_fill_real_rescaled__vs__real_rescaled", "fake": "flux_fill_real_rescaled", "real": "real_rescaled"},
+    {"name": "flux_fill_flux_1_dev__vs__flux_1_dev", "fake": "flux_fill_flux_1_dev", "real": "flux_1_dev"},
+    {"name": "flux_fill_sd_3_5_large__vs__sd_3_5_large", "fake": "flux_fill_sd_3_5_large", "real": "sd_3_5_large"},
 ]
 
 PYTHON_EXEC = "./.venv/bin/python"
 
-def run_command(cmd):
+def run_command(cmd, capture=True):
     print(f"Executing: {' '.join(cmd)}")
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0:
-        print(f"Error: {result.stderr}")
-    return result.stdout
+    if capture:
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"Error: {result.stderr}")
+        return result.stdout
+    else:
+        subprocess.run(cmd)
+        return ""
 
 def train_all_models(epochs=10):
-    for i in range(8):
+    for exp in EXPERIMENTS:
         choices = ["0"] * 8
-        choices[i] = "1"
+        choices[MODEL_TO_CHOICE_IDX[exp["fake"]]] = "1"
         
-        save_path = f"results/train_on_{MODEL_NAMES[i]}"
-        print(f"\n>>> TRENING: {MODEL_NAMES[i]}...")
+        save_path = f"results/train_on_{exp['name']}"
+        print(f"\n>>> TRENING: {exp['name']}...")
         
         train_cmd = [
             PYTHON_EXEC, "train.py",
             "--choices", *choices,
+            "--real_source", exp["real"],
             "--save_path", save_path,
             "--epoch", str(epochs)
         ]
-        run_command(train_cmd)
+        run_command(train_cmd, capture=False)
 
 def evaluate_and_build_matrix():
-    matrix = np.zeros((8, 8))
+    n = len(EXPERIMENTS)
+    matrix = np.zeros((n, n))
+    exp_names = [e["name"] for e in EXPERIMENTS]
     
-    for i in range(8):
-        model_path = f"results/train_on_{MODEL_NAMES[i]}/Network_best.pth"
+    for i, train_exp in enumerate(EXPERIMENTS):
+        model_path = f"results/train_on_{train_exp['name']}/Network_best.pth"
         if not os.path.exists(model_path):
             print(f"Pominięto: Brak modelu {model_path}")
             continue
             
-        print(f"\n>>> EWALUACJA modelu wytrenowanego na {MODEL_NAMES[i]}...")
-        # Testujemy na wszystkich 8 zbiorach (choices 1 1 1...)
-        choices = ["1"] * 8
-        test_cmd = [
-            PYTHON_EXEC, "test.py",
-            "--choices", *choices,
-            "--load", model_path
-        ]
+        print(f"\n>>> EWALUACJA modelu wytrenowanego na {train_exp['name']}...")
         
-        output = run_command(test_cmd)
-        
-        # Parsowanie wyników accuracy z test.py
-        datasets_found = re.findall(r"\[Evaluating dataset: (.*?)\]", output)
-        performances = re.findall(r"Subset Performance: (0\.\d+)", output)
-        
-        perf_map = dict(zip(datasets_found, [float(p) for p in performances]))
-        
-        for j, test_name in enumerate(MODEL_NAMES):
-            if test_name in perf_map:
-                matrix[i, j] = perf_map[test_name]
+        for j, test_exp in enumerate(EXPERIMENTS):
+            choices = ["0"] * 8
+            choices[MODEL_TO_CHOICE_IDX[test_exp["fake"]]] = "1"
+            
+            test_cmd = [
+                PYTHON_EXEC, "test.py",
+                "--choices", *choices,
+                "--real_source", test_exp["real"],
+                "--load", model_path
+            ]
+            
+            output = run_command(test_cmd)
+            
+            datasets_found = re.findall(r"\[Evaluating dataset: (.*?)\]", output)
+            performances = re.findall(r"Subset Performance: (0\.\d+)", output)
+            
+            perf_map = dict(zip(datasets_found, [float(p) for p in performances]))
+            
+            # Nasze test.py ewaluowało choices wskazujące celowy dataset,
+            # odczytujemy więc jego wynik bezpośrednio jeśli log się zgadza z kluczem "fake".
+            if test_exp["fake"] in perf_map:
+                matrix[i, j] = perf_map[test_exp["fake"]]
                 
-    return matrix
+    return matrix, exp_names
 
-def plot_matrix(matrix):
-    df = pd.DataFrame(matrix, index=MODEL_NAMES, columns=MODEL_NAMES)
+def plot_matrix(matrix, exp_names):
+    df = pd.DataFrame(matrix, index=exp_names, columns=exp_names)
     
-    plt.figure(figsize=(12, 10))
+    plt.figure(figsize=(16, 14))
     sns.set_theme(style="white")
     sns.heatmap(
         df, annot=True, fmt=".4f", cmap="YlGnBu", 
@@ -86,7 +115,7 @@ def plot_matrix(matrix):
     )
     
     plt.title("Cross-Model Evaluation (Accuracy Matrix)", fontsize=16, pad=20)
-    plt.xlabel("Test Set (AI Model)", fontsize=12)
+    plt.xlabel("Test Set (AI Model with specific Real Source)", fontsize=12)
     plt.ylabel("Training Set (Trained Model)", fontsize=12)
     plt.tight_layout()
     
@@ -98,11 +127,8 @@ if __name__ == "__main__":
     if not os.path.exists("results"):
         os.makedirs("results")
         
-    # 1. Trenuj każdy model z osobna
-    train_all_models(epochs=10) # możesz zwiększyć liczbę epok
+    train_all_models(epochs=10) 
     
-    # 2. Ewaluacja krzyżowa
-    matrix = evaluate_and_build_matrix()
+    matrix, exp_names = evaluate_and_build_matrix()
     
-    # 3. Generowanie macierzy (confusion matrix style)
-    plot_matrix(matrix)
+    plot_matrix(matrix, exp_names)
