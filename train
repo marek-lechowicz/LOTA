@@ -1,0 +1,278 @@
+╔══════════════════════════════════════════╗
+║          TRAINING CONFIGURATION           ║
+╠══════════════════════════════════════════╣
+║            batchsize: 64                  
+║             bit_mode: scaling             
+║              choices: [0, 0, 0, 1, 0, 0, 0, 0]
+║                epoch: 10                  
+║               gpu_id: 0                   
+║           image_root: /home/marek/projects/fake_flickr_sota/data
+║           img_height: 256                 
+║              isPatch: True                
+║              isTrain: True                
+║                isVal: False               
+║                 load: None                
+║                   lr: 0.0001              
+║           patch_mode: max                 
+║           patch_size: 32                  
+║          real_source: sd_3_5_large        
+║            save_path: results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large
+║        val_batchsize: 64                  
+╚══════════════════════════════════════════╝
+╔══════════════════════════════════════════╗
+║          TRAINING CONFIGURATION           ║
+╠══════════════════════════════════════════╣
+║            batchsize: 64                  
+║             bit_mode: scaling             
+║              choices: [0, 0, 0, 1, 0, 0, 0, 0]
+║                epoch: 10                  
+║               gpu_id: 0                   
+║           image_root: /home/marek/projects/fake_flickr_sota/data
+║           img_height: 256                 
+║              isPatch: True                
+║              isTrain: True                
+║                isVal: False               
+║                 load: None                
+║                   lr: 0.0001              
+║           patch_mode: max                 
+║           patch_size: 32                  
+║          real_source: sd_3_5_large        
+║            save_path: results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large
+║        val_batchsize: 64                  
+╚══════════════════════════════════════════╝
+Train dataset: flux_fill_sd_3_5_large
+Val dataset: flux_fill_sd_3_5_large
+||Training||
+📊 Epoch: 01/10 | 🔢 Iteration: 0001/0931 (0.1%) | 📉 Loss Metric: 0.721531
+📊 Epoch: 01/10 | 🔢 Iteration: 0500/0931 (53.7%) | 📉 Loss Metric: 0.694582
+📊 Epoch: 01/10 | 🔢 Iteration: 0931/0931 (100.0%) | 📉 Loss Metric: 0.695346
+||Validating||
+Epoch: 1, Accuracy: 0.5070
+Saved best model on Epoch: 1
+🏆 Performance Report | Current Epoch: 001 | Accuracy Score: 50.70% | Peak Performance: Epoch 001 | Highest Accuracy: 50.70%
+📊 Epoch: 02/10 | 🔢 Iteration: 0001/0931 (0.1%) | 📉 Loss Metric: 0.682587
+📊 Epoch: 02/10 | 🔢 Iteration: 0500/0931 (53.7%) | 📉 Loss Metric: 0.683028
+📊 Epoch: 02/10 | 🔢 Iteration: 0931/0931 (100.0%) | 📉 Loss Metric: 0.686354
+||Validating||
+Epoch: 2, Accuracy: 0.5190
+Saved best model on Epoch: 2
+🏆 Performance Report | Current Epoch: 002 | Accuracy Score: 51.90% | Peak Performance: Epoch 002 | Highest Accuracy: 51.90%
+📊 Epoch: 03/10 | 🔢 Iteration: 0001/0931 (0.1%) | 📉 Loss Metric: 0.676458
+📊 Epoch: 03/10 | 🔢 Iteration: 0500/0931 (53.7%) | 📉 Loss Metric: 0.695191
+📊 Epoch: 03/10 | 🔢 Iteration: 0931/0931 (100.0%) | 📉 Loss Metric: 0.711302
+||Validating||
+Epoch: 3, Accuracy: 0.5325
+Saved best model on Epoch: 3
+🏆 Performance Report | Current Epoch: 003 | Accuracy Score: 53.25% | Peak Performance: Epoch 003 | Highest Accuracy: 53.25%
+📊 Epoch: 04/10 | 🔢 Iteration: 0001/0931 (0.1%) | 📉 Loss Metric: 0.704098
+📊 Epoch: 04/10 | 🔢 Iteration: 0500/0931 (53.7%) | 📉 Loss Metric: 0.688736
+📊 Epoch: 04/10 | 🔢 Iteration: 0931/0931 (100.0%) | 📉 Loss Metric: 0.684740
+||Validating||
+Epoch: 4, Accuracy: 0.5155
+🏆 Performance Report | Current Epoch: 004 | Accuracy Score: 51.55% | Peak Performance: Epoch 003 | Highest Accuracy: 53.25%
+📊 Epoch: 05/10 | 🔢 Iteration: 0001/0931 (0.1%) | 📉 Loss Metric: 0.694863
+📊 Epoch: 05/10 | 🔢 Iteration: 0500/0931 (53.7%) | 📉 Loss Metric: 0.698820
+📊 Epoch: 05/10 | 🔢 Iteration: 0931/0931 (100.0%) | 📉 Loss Metric: 0.704713
+||Validating||
+Epoch: 5, Accuracy: 0.5100
+🏆 Performance Report | Current Epoch: 005 | Accuracy Score: 51.00% | Peak Performance: Epoch 003 | Highest Accuracy: 53.25%
+📊 Epoch: 06/10 | 🔢 Iteration: 0001/0931 (0.1%) | 📉 Loss Metric: 0.679107
+📊 Epoch: 06/10 | 🔢 Iteration: 0500/0931 (53.7%) | 📉 Loss Metric: 0.670785
+📊 Epoch: 06/10 | 🔢 Iteration: 0931/0931 (100.0%) | 📉 Loss Metric: 0.675941
+||Validating||
+Epoch: 6, Accuracy: 0.5285
+🏆 Performance Report | Current Epoch: 006 | Accuracy Score: 52.85% | Peak Performance: Epoch 003 | Highest Accuracy: 53.25%
+📊 Epoch: 07/10 | 🔢 Iteration: 0001/0931 (0.1%) | 📉 Loss Metric: 0.674779
+📊 Epoch: 07/10 | 🔢 Iteration: 0500/0931 (53.7%) | 📉 Loss Metric: 0.686890
+📊 Epoch: 07/10 | 🔢 Iteration: 0931/0931 (100.0%) | 📉 Loss Metric: 0.666525
+||Validating||
+Epoch: 7, Accuracy: 0.5180
+🏆 Performance Report | Current Epoch: 007 | Accuracy Score: 51.80% | Peak Performance: Epoch 003 | Highest Accuracy: 53.25%
+📊 Epoch: 08/10 | 🔢 Iteration: 0001/0931 (0.1%) | 📉 Loss Metric: 0.692476
+📊 Epoch: 08/10 | 🔢 Iteration: 0500/0931 (53.7%) | 📉 Loss Metric: 0.679377
+📊 Epoch: 08/10 | 🔢 Iteration: 0931/0931 (100.0%) | 📉 Loss Metric: 0.694187
+||Validating||
+Epoch: 8, Accuracy: 0.5300
+🏆 Performance Report | Current Epoch: 008 | Accuracy Score: 53.00% | Peak Performance: Epoch 003 | Highest Accuracy: 53.25%
+📊 Epoch: 09/10 | 🔢 Iteration: 0001/0931 (0.1%) | 📉 Loss Metric: 0.690730
+📊 Epoch: 09/10 | 🔢 Iteration: 0500/0931 (53.7%) | 📉 Loss Metric: 0.679839
+📊 Epoch: 09/10 | 🔢 Iteration: 0931/0931 (100.0%) | 📉 Loss Metric: 0.674304
+||Validating||
+Epoch: 9, Accuracy: 0.5335
+Saved best model on Epoch: 9
+🏆 Performance Report | Current Epoch: 009 | Accuracy Score: 53.35% | Peak Performance: Epoch 009 | Highest Accuracy: 53.35%
+📊 Epoch: 10/10 | 🔢 Iteration: 0001/0931 (0.1%) | 📉 Loss Metric: 0.692107
+📊 Epoch: 10/10 | 🔢 Iteration: 0500/0931 (53.7%) | 📉 Loss Metric: 0.696932
+📊 Epoch: 10/10 | 🔢 Iteration: 0931/0931 (100.0%) | 📉 Loss Metric: 0.695274
+||Validating||
+Epoch: 10, Accuracy: 0.5365
+Saved best model on Epoch: 10
+🏆 Performance Report | Current Epoch: 010 | Accuracy Score: 53.65% | Peak Performance: Epoch 010 | Highest Accuracy: 53.65%
+
+>>> POMINIĘTO TRENING: flux_1_dev__vs__real (znaleziono flagę ukończenia)
+
+>>> POMINIĘTO TRENING: flux_fill_flux_1_dev__vs__real (znaleziono flagę ukończenia)
+
+>>> POMINIĘTO TRENING: flux_fill_real_rescaled__vs__real (znaleziono flagę ukończenia)
+
+>>> POMINIĘTO TRENING: flux_fill_sd_3_5_large__vs__real (znaleziono flagę ukończenia)
+
+>>> POMINIĘTO TRENING: sd_1_5__vs__real (znaleziono flagę ukończenia)
+
+>>> POMINIĘTO TRENING: sd_3_5_large__vs__real (znaleziono flagę ukończenia)
+
+>>> POMINIĘTO TRENING: sdxl_turbo__vs__real (znaleziono flagę ukończenia)
+
+>>> POMINIĘTO TRENING: z_image_turbo__vs__real (znaleziono flagę ukończenia)
+
+>>> POMINIĘTO TRENING: flux_fill_real_rescaled__vs__real_rescaled (znaleziono flagę ukończenia)
+
+>>> POMINIĘTO TRENING: flux_fill_flux_1_dev__vs__flux_1_dev (znaleziono flagę ukończenia)
+
+>>> TRENING: flux_fill_sd_3_5_large__vs__sd_3_5_large...
+Executing: ./.venv/bin/python train.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --save_path results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large --epoch 10
+
+>>> EWALUACJA modelu wytrenowanego na flux_1_dev__vs__real...
+Executing: ./.venv/bin/python test.py --choices 1 0 0 0 0 0 0 0 --real_source real --load results/train_on_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source real --load results/train_on_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real --load results/train_on_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source real --load results/train_on_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 1 0 0 0 --real_source real --load results/train_on_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 1 0 0 --real_source real --load results/train_on_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 1 0 --real_source real --load results/train_on_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 0 1 --real_source real --load results/train_on_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real_rescaled --load results/train_on_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source flux_1_dev --load results/train_on_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --load results/train_on_flux_1_dev__vs__real/Network_best.pth
+
+>>> EWALUACJA modelu wytrenowanego na flux_fill_flux_1_dev__vs__real...
+Executing: ./.venv/bin/python test.py --choices 1 0 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 1 0 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 1 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 1 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 0 1 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real_rescaled --load results/train_on_flux_fill_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source flux_1_dev --load results/train_on_flux_fill_flux_1_dev__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --load results/train_on_flux_fill_flux_1_dev__vs__real/Network_best.pth
+
+>>> EWALUACJA modelu wytrenowanego na flux_fill_real_rescaled__vs__real...
+Executing: ./.venv/bin/python test.py --choices 1 0 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 1 0 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 1 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 1 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 0 1 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real_rescaled --load results/train_on_flux_fill_real_rescaled__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source flux_1_dev --load results/train_on_flux_fill_real_rescaled__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --load results/train_on_flux_fill_real_rescaled__vs__real/Network_best.pth
+
+>>> EWALUACJA modelu wytrenowanego na flux_fill_sd_3_5_large__vs__real...
+Executing: ./.venv/bin/python test.py --choices 1 0 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 1 0 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 1 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 1 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 0 1 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real_rescaled --load results/train_on_flux_fill_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source flux_1_dev --load results/train_on_flux_fill_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --load results/train_on_flux_fill_sd_3_5_large__vs__real/Network_best.pth
+
+>>> EWALUACJA modelu wytrenowanego na sd_1_5__vs__real...
+Executing: ./.venv/bin/python test.py --choices 1 0 0 0 0 0 0 0 --real_source real --load results/train_on_sd_1_5__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source real --load results/train_on_sd_1_5__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real --load results/train_on_sd_1_5__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source real --load results/train_on_sd_1_5__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 1 0 0 0 --real_source real --load results/train_on_sd_1_5__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 1 0 0 --real_source real --load results/train_on_sd_1_5__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 1 0 --real_source real --load results/train_on_sd_1_5__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 0 1 --real_source real --load results/train_on_sd_1_5__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real_rescaled --load results/train_on_sd_1_5__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source flux_1_dev --load results/train_on_sd_1_5__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --load results/train_on_sd_1_5__vs__real/Network_best.pth
+
+>>> EWALUACJA modelu wytrenowanego na sd_3_5_large__vs__real...
+Executing: ./.venv/bin/python test.py --choices 1 0 0 0 0 0 0 0 --real_source real --load results/train_on_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source real --load results/train_on_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real --load results/train_on_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source real --load results/train_on_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 1 0 0 0 --real_source real --load results/train_on_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 1 0 0 --real_source real --load results/train_on_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 1 0 --real_source real --load results/train_on_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 0 1 --real_source real --load results/train_on_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real_rescaled --load results/train_on_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source flux_1_dev --load results/train_on_sd_3_5_large__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --load results/train_on_sd_3_5_large__vs__real/Network_best.pth
+
+>>> EWALUACJA modelu wytrenowanego na sdxl_turbo__vs__real...
+Executing: ./.venv/bin/python test.py --choices 1 0 0 0 0 0 0 0 --real_source real --load results/train_on_sdxl_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source real --load results/train_on_sdxl_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real --load results/train_on_sdxl_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source real --load results/train_on_sdxl_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 1 0 0 0 --real_source real --load results/train_on_sdxl_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 1 0 0 --real_source real --load results/train_on_sdxl_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 1 0 --real_source real --load results/train_on_sdxl_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 0 1 --real_source real --load results/train_on_sdxl_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real_rescaled --load results/train_on_sdxl_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source flux_1_dev --load results/train_on_sdxl_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --load results/train_on_sdxl_turbo__vs__real/Network_best.pth
+
+>>> EWALUACJA modelu wytrenowanego na z_image_turbo__vs__real...
+Executing: ./.venv/bin/python test.py --choices 1 0 0 0 0 0 0 0 --real_source real --load results/train_on_z_image_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source real --load results/train_on_z_image_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real --load results/train_on_z_image_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source real --load results/train_on_z_image_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 1 0 0 0 --real_source real --load results/train_on_z_image_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 1 0 0 --real_source real --load results/train_on_z_image_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 1 0 --real_source real --load results/train_on_z_image_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 0 1 --real_source real --load results/train_on_z_image_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real_rescaled --load results/train_on_z_image_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source flux_1_dev --load results/train_on_z_image_turbo__vs__real/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --load results/train_on_z_image_turbo__vs__real/Network_best.pth
+
+>>> EWALUACJA modelu wytrenowanego na flux_fill_real_rescaled__vs__real_rescaled...
+Executing: ./.venv/bin/python test.py --choices 1 0 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real_rescaled/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real_rescaled/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real_rescaled/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real_rescaled/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 1 0 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real_rescaled/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 1 0 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real_rescaled/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 1 0 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real_rescaled/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 0 1 --real_source real --load results/train_on_flux_fill_real_rescaled__vs__real_rescaled/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real_rescaled --load results/train_on_flux_fill_real_rescaled__vs__real_rescaled/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source flux_1_dev --load results/train_on_flux_fill_real_rescaled__vs__real_rescaled/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --load results/train_on_flux_fill_real_rescaled__vs__real_rescaled/Network_best.pth
+
+>>> EWALUACJA modelu wytrenowanego na flux_fill_flux_1_dev__vs__flux_1_dev...
+Executing: ./.venv/bin/python test.py --choices 1 0 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__flux_1_dev/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__flux_1_dev/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__flux_1_dev/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__flux_1_dev/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 1 0 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__flux_1_dev/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 1 0 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__flux_1_dev/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 1 0 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__flux_1_dev/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 0 1 --real_source real --load results/train_on_flux_fill_flux_1_dev__vs__flux_1_dev/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real_rescaled --load results/train_on_flux_fill_flux_1_dev__vs__flux_1_dev/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source flux_1_dev --load results/train_on_flux_fill_flux_1_dev__vs__flux_1_dev/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --load results/train_on_flux_fill_flux_1_dev__vs__flux_1_dev/Network_best.pth
+
+>>> EWALUACJA modelu wytrenowanego na flux_fill_sd_3_5_large__vs__sd_3_5_large...
+Executing: ./.venv/bin/python test.py --choices 1 0 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 1 0 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 1 0 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 1 0 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 0 0 0 0 1 --real_source real --load results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 1 0 0 0 0 0 --real_source real_rescaled --load results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 1 0 0 0 0 0 0 --real_source flux_1_dev --load results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large/Network_best.pth
+Executing: ./.venv/bin/python test.py --choices 0 0 0 1 0 0 0 0 --real_source sd_3_5_large --load results/train_on_flux_fill_sd_3_5_large__vs__sd_3_5_large/Network_best.pth
+
+Wykres zapisano w: results/accuracy_matrix.png
