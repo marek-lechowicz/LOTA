@@ -46,16 +46,25 @@ def run_command(cmd, capture=True):
             print(f"Error: {result.stderr}")
         return result.stdout
     else:
-        subprocess.run(cmd)
-        return ""
+        result = subprocess.run(cmd)
+        return result.returncode == 0
 
 def train_all_models(epochs=10):
     for exp in EXPERIMENTS:
+        save_path = f"results/train_on_{exp['name']}"
+        finished_flag = os.path.join(save_path, "training_finished.flag")
+        
+        if os.path.exists(finished_flag):
+            print(f"\n>>> POMINIĘTO TRENING: {exp['name']} (znaleziono flagę ukończenia)")
+            continue
+            
         choices = ["0"] * 8
         choices[MODEL_TO_CHOICE_IDX[exp["fake"]]] = "1"
         
-        save_path = f"results/train_on_{exp['name']}"
         print(f"\n>>> TRENING: {exp['name']}...")
+        
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
         
         train_cmd = [
             PYTHON_EXEC, "train.py",
@@ -64,7 +73,15 @@ def train_all_models(epochs=10):
             "--save_path", save_path,
             "--epoch", str(epochs)
         ]
-        run_command(train_cmd, capture=False)
+        
+        success = run_command(train_cmd, capture=False)
+        if success:
+            with open(finished_flag, "w") as f:
+                f.write("Done")
+        else:
+            print(f"\n[!] Trening przerwany przy eksperymencie {exp['name']}. Skrypt cross_experiment został zatrzymany.")
+            break
+
 
 def evaluate_and_build_matrix():
     n = len(EXPERIMENTS)
