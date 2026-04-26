@@ -35,6 +35,14 @@ EXPERIMENTS = [
     {"name": "flux_fill_real_rescaled__vs__real_rescaled", "fake": "flux_fill_real_rescaled", "real": "real_rescaled"},
     {"name": "flux_fill_flux_1_dev__vs__flux_1_dev", "fake": "flux_fill_flux_1_dev", "real": "flux_1_dev"},
     {"name": "flux_fill_sd_3_5_large__vs__sd_3_5_large", "fake": "flux_fill_sd_3_5_large", "real": "sd_3_5_large"},
+
+    {"name": "flux_1_dev__vs__real_rescaled", "fake": "flux_1_dev", "real": "real_rescaled"},
+    {"name": "flux_fill_flux_1_dev__vs__real_rescaled", "fake": "flux_fill_flux_1_dev", "real": "real_rescaled"},
+    {"name": "flux_fill_sd_3_5_large__vs__real_rescaled", "fake": "flux_fill_sd_3_5_large", "real": "real_rescaled"},
+    {"name": "sd_1_5__vs__real_rescaled", "fake": "sd_1_5", "real": "real_rescaled"},
+    {"name": "sd_3_5_large__vs__real_rescaled", "fake": "sd_3_5_large", "real": "real_rescaled"},
+    {"name": "sdxl_turbo__vs__real_rescaled", "fake": "sdxl_turbo", "real": "real_rescaled"},
+    {"name": "z_image_turbo__vs__real_rescaled", "fake": "z_image_turbo", "real": "real_rescaled"},
 ]
 
 PYTHON_EXEC = "./.venv/bin/python"
@@ -193,7 +201,7 @@ def plot_matrix(df_summary, exp_names, metric_name, title_label):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Cross-Experiment Pipeline Control")
-    parser.add_argument("--plot_only", default=True, action="store_true", help="Skip training/eval and only generate plots from results/cross_evaluation_detailed_metrics.csv")
+    parser.add_argument("--plot_only", default=False, action="store_true", help="Skip training/eval and only generate plots from results/cross_evaluation_detailed_metrics.csv")
     args = parser.parse_args()
 
     if not os.path.exists("results"):

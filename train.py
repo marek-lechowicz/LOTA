@@ -111,7 +111,7 @@ def perform_validation(
             print(f"||Validating||")
 
             # Process AI-generated images
-            for inputs, targets in ai_loader:
+            for inputs, targets, _ in ai_loader:
                 inputs = inputs.cuda()
                 targets = targets.cuda()
 
@@ -129,7 +129,7 @@ def perform_validation(
             #print(f"AI Accuracy: {ai_accuracy:.4f}")
 
             # Process natural images
-            for inputs, targets in nature_loader:
+            for inputs, targets, _ in nature_loader:
                 inputs = inputs.cuda()
                 targets = targets.cuda()
 

@@ -35,7 +35,7 @@ DATASET_PATHS = {
     "flux_fill_real_rescaled": "/home/marek/FakeFlickr/data/fake-flickr/generated/flux_fill_real_rescaled/img",
     "flux_fill_flux_1_dev": "/home/marek/FakeFlickr/data/fake-flickr/generated/flux_fill_flux_1_dev/img",
     "flux_fill_sd_3_5_large": "/home/marek/FakeFlickr/data/fake-flickr/generated/flux_fill_sd_3_5_large/img",
-    "sd_1_5": "/home/marek/FakeFlickr/data/fake-flickr/generated/sd_1_5/img", # Backup, jakby zostało w mapie
+    "sd_1_5": "/home/marek/FakeFlickr/data/fake-flickr/generated/sd_1_5/img",
 }
 
 def read_split_ids(file_path: Path):
